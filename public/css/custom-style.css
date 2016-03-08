@@ -1,0 +1,35 @@
+.menu-item{
+    color:#C34A4A !important;
+    background-color: #ddd!important;
+    border-radius: 50px;
+    margin: 8px;    
+    box-shadow: #D0C2C2 4px 4px 3px;   
+
+}
+
+.menu-item:hover{
+    animation: moveup 0.25s linear;
+    animation-play-state: running; 
+    animation-fill-mode:forwards
+}
+
+@keyframes moveup {
+    0%   {  top: 0px; box-shadow: #D0C2C2 4px 4px 3px }
+    100% {  top: -4px; box-shadow: #D0C2C2 4px 8px 3px}
+}
+
+.logo{
+    color:#C34A4A !important; 
+    font-size: 20px;   
+}
+
+.selectable{
+    font-size: 12px;
+}
+
+.badge-lan{background-color:#33cc33;}
+.badge-pc{background-color:#6699ff;}
+
+.clear-btn{
+    margin: 10px 0px 15px 5px;
+}
