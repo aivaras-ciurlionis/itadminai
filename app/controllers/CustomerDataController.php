@@ -6,7 +6,20 @@ use app\repositories\CustomerRepository;
 class CustomerDataController extends BaseController {
 
     protected $customer;
-    protected $rules = array('name' => 'required|alpha|min:2|max:50', 'city' => 'required|alpha|min:2|max:50', 'country' => 'required|alpha|min:2|max:50');
+    protected $rules = array('name' => 'required|min:2|max:50', 'city' => 'required|min:2|max:50', 'country' => 'required|min:2|max:50');
+
+    protected $messages = array(
+        'name.required' => 'Įveskite vardą',
+        'name.max' => 'Vardas negali būti ilgesnis nei :max simbolių',
+        'name.min' => 'Vardas negali būti trumpesnis nei :min simboliai',
+        'city.required' => 'Įveskite miestą',
+        'city.min' => 'Miestas negali būti trumpesnis nei :min simboliai',
+        'city.max' => 'Miestas negali būti ilgesnis nei :min simbolių',
+        'country.required' => 'Įveskite valstybę',
+        'country.min' => 'Valstybės pavadinimas negali būti trumpesnis nei :min simboliai',
+        'country.max' => 'Valstybės pavadinimas negali būti ilgesnis nei :min simbolių'
+    );
+
 
     public function __construct(CustomerRepository $customer) {
         $this->customer = $customer;
@@ -31,10 +44,10 @@ class CustomerDataController extends BaseController {
 
     public function postSettings() {
 
-        $validator = Validator::make(Input::all(), $this->rules);
+        $validator = Validator::make(Input::all(), $this->rules, $this->messages);
         if ($validator->passes()) {
             $this->customer->updateDetails(Auth::user(), Input::get('name'), Input::get('city'), Input::get('country'));
-            Session::flash('successMessage', 'Changes saved!');
+            Session::flash('successMessage', 'Nustatymų pakeitimai išsaugoti!');
             return Redirect::to('customer/settings');
 
         } else {

@@ -1,7 +1,7 @@
 @if (count($errors) > 0)
     <!-- Form Error List -->
     <div class="alert alert-danger">
-        <strong>There are errors in your data. Please check and try again.</strong>
+        <strong>Pateiktuose duomenyse yra klaidų. Peržiūrėkite pranešimus ir bandykite dar kartą.</strong>
 
         <br><br>
 

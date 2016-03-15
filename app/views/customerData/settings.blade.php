@@ -4,7 +4,7 @@
 <div class="container">
     <div class="panel panel-default">
         <div class="panel-heading">
-            <h2> Your settings </h2>
+            <h2> Jūsų nustatymai </h2>
         </div>
 
         <div class="panel-body">
@@ -14,19 +14,19 @@
             
             <form class="form-horizontal" action="{{ url('customer/settings') }}" method="POST">
                 <div class="form-group">
-                    <label for="name" class="col-sm-2 control-label">Full name</label>
+                    <label for="name" class="col-sm-2 control-label">Vardas</label>
                     <div class="col-sm-10">
                         <input type="text" class="form-control" name="name" id="name" value="{{ $name or Request::old('name')}}" placeholder="Name...">
                     </div>
                 </div>
                 <div class="form-group"> 
-                    <label for="city" class="col-sm-2 control-label">City</label>
+                    <label for="city" class="col-sm-2 control-label">Miestas</label>
                     <div class="col-sm-10">
                         <input type="text" class="form-control" name="city" id="city" value="{{ $customer->city or Request::old('city')}}" placeholder="City...">
                     </div>
                 </div>
                 <div class="form-group">
-                    <label for="country" class="col-sm-2 control-label">Country</label>
+                    <label for="country" class="col-sm-2 control-label">Valstybė</label>
                     <div class="col-sm-10">
                         <input type="text" class="form-control" name="country" id="country" value="{{ $customer->country or Request::old('country')}}" placeholder="Country...">
                     </div>

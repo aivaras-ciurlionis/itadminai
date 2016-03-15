@@ -31,6 +31,17 @@ App::after(function($request, $response) {
 |
 */
 
+
+function userHasRole($roles, $roleName){    
+    $rolesNames = '';
+    foreach ($roles as $role){
+        if ($roleName === $role->name){
+            return true;
+        }   
+    }    
+    return false;    
+}
+
 Route::filter('auth', function() {
     if (Auth::guest()) {
         if (Request::ajax()) {
@@ -42,16 +53,18 @@ Route::filter('auth', function() {
 });
 
 
-Route::filter('customer', function() {
+Route::filter('customer', function() {    
     
     if (Auth::guest()) {
        return Redirect::guest('login');       
     }
+       
+    $roles = Auth::user()->roles();   
     
-    if (Auth::user()->role->name !== 'Customer'){
-        return Redirect::guest('login');                
-    }   
-
+    if (!userHasRole(Auth::user()->roles, 'Customer')){
+          return Redirect::guest('login');  
+    }
+    
 });
 
 

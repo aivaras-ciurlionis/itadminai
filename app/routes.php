@@ -30,3 +30,4 @@ Route::post('/customer/settings', array ('before' => 'customer', 'uses' => 'Cust
 Route::get('/newfault', array('before' => 'customer', 'uses' => 'FaultsController@getNewFault'));
 Route::get('/customer/faults', array('before' => 'customer', 'uses' => 'FaultsController@getAllFaults'));
 Route::post('/savefault', array('before' => 'customer', 'uses' => 'FaultsController@createNewFault'));
+Route::get('/faults/{id}', array('before' => 'customer', 'uses' => 'FaultsController@faultDetails'));
