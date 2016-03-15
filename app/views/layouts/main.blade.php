@@ -76,7 +76,10 @@ function getRolesOfUser($roles) {
                     <li class="menu-item"><a href="{{ url('/customer') }}">Pradžia</a></li>
                     <li class="menu-item"><a href="{{ url('/customer/settings') }}">Nustatymai</a></li>
                     <li class="menu-item"><a href="{{ url('/newfault') }}">Naujas gedimas</a></li>
-                    <li class="menu-item"><a href="{{ url('customer/faults') }}">Registruoti gedimai</a></li>
+                    <li class="menu-item"><a href="{{ url('/faults/created') }}">Registruoti gedimai</a></li>
+                    @endif
+                    @if(!Auth::guest() && userHasRole(Auth::user()->roles, 'Employee'))
+                    <li class="menu-item"><a href="{{ url('/faults/asigned') }}">Priskirti gedimai</a></li>
                     @endif
                 </ul>
 

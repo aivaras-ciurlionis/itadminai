@@ -28,6 +28,7 @@ Route::get('/customer/settings', array ('before' => 'customer', 'uses' => 'Custo
 Route::post('/customer/settings', array ('before' => 'customer', 'uses' => 'CustomerDataController@postSettings'));
 
 Route::get('/newfault', array('before' => 'customer', 'uses' => 'FaultsController@getNewFault'));
-Route::get('/customer/faults', array('before' => 'customer', 'uses' => 'FaultsController@getAllFaults'));
+Route::get('/faults/{type}', array('before' => 'customer', 'uses' => 'FaultsController@getAllFaults'));
 Route::post('/savefault', array('before' => 'customer', 'uses' => 'FaultsController@createNewFault'));
-Route::get('/faults/{id}', array('before' => 'customer', 'uses' => 'FaultsController@faultDetails'));
+Route::post('/updateFault/{id}', array('before' => 'customer', 'uses' => 'FaultsController@updateFault'));
+Route::get('/faults/details/{id}', array('before' => 'customer', 'uses' => 'FaultsController@faultDetails'));

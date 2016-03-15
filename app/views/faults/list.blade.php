@@ -34,7 +34,7 @@ function showSortArrow($thisField, $currentField, $order) {
 
             @if(isset($sortField) || isset($search) || isset($stateFilter))
             <div class="">
-                <a href="{{url('customer/faults')}}" class="btn btn-default btn-lg clear-btn">                    
+                <a href="{{url('faults/'.$type)}}" class="btn btn-default btn-lg clear-btn">                    
                     Išvalyti filtrus
                     <i class="fa fa-remove"> </i>
                 </a>
@@ -42,7 +42,7 @@ function showSortArrow($thisField, $currentField, $order) {
             @endif
 
             <div>
-                <form class="form-horizontal" method="GET" action="{{ url('customer/faults') }}">
+                <form class="form-horizontal" method="GET" action="{{ url('faults/'.$type) }}">
                     <div class="form-group">
                         <label for="city" class="col-sm-2 control-label">Ieškoti pagal pavadinimą:</label>
                         <div class="col-sm-3">
@@ -52,7 +52,7 @@ function showSortArrow($thisField, $currentField, $order) {
 
                 </form>
 
-                <form class="form-horizontal" method="GET" action="{{ url('customer/faults') }}">
+                <form class="form-horizontal" method="GET" action="{{ url('faults/'.$type) }}">
                     <div class="form-group">
                         <label for="city" class="col-sm-2 control-label">Ieškoti pagal būseną:</label>
                         <div class="col-sm-3">
@@ -75,15 +75,15 @@ function showSortArrow($thisField, $currentField, $order) {
                 <table class="table table-hover">
                     <thead>
                         <tr>
-                            <th><a title="Rikiuoti pagal pavadinimą" href="{{ url('customer/faults?sortField=title&sortDirection='.flipSort($sortDirection)) }}">Pavadinimas</a> <?php showSortArrow('title', $sortField, $sortDirection) ?>
+                            <th><a title="Rikiuoti pagal pavadinimą" href="{{ url('faults/'.$type.'?sortField=title&sortDirection='.flipSort($sortDirection)) }}">Pavadinimas</a> <?php showSortArrow('title', $sortField, $sortDirection) ?>
                             </th>
-                            <th><a title="Rikiuoti pagal tipą" href="{{ url('customer/faults?sortField=type&sortDirection='.flipSort($sortDirection)) }}">Tipas</a> <?php showSortArrow('type', $sortField, $sortDirection) ?>
+                            <th><a title="Rikiuoti pagal tipą" href="{{ url('faults/'.$type.'?sortField=type&sortDirection='.flipSort($sortDirection)) }}">Tipas</a> <?php showSortArrow('type', $sortField, $sortDirection) ?>
                             </th>
-                            <th><a title="Rikiuoti pagal OS" href="{{ url('customer/faults?sortField=operating_system&sortDirection='.flipSort($sortDirection)) }}">Os</a> <?php showSortArrow('operating_system', $sortField, $sortDirection) ?>
+                            <th><a title="Rikiuoti pagal OS" href="{{ url('faults/'.$type.'?sortField=operating_system&sortDirection='.flipSort($sortDirection)) }}">Os</a> <?php showSortArrow('operating_system', $sortField, $sortDirection) ?>
                             </th>
-                            <th><a title="Rikiuoti pagal būseną" href="{{ url('customer/faults?sortField=state&sortDirection='.flipSort($sortDirection)) }}">Būsena</a> <?php showSortArrow('state', $sortField, $sortDirection) ?>
+                            <th><a title="Rikiuoti pagal būseną" href="{{ url('faults/'.$type.'?sortField=state&sortDirection='.flipSort($sortDirection)) }}">Būsena</a> <?php showSortArrow('state', $sortField, $sortDirection) ?>
                             </th>
-                            <th><a title="Rikiuoti pagal registravimo datą" href="{{ url('customer/faults?sortField=created_at&sortDirection='.flipSort($sortDirection)) }}">Registravimo data</a> <?php showSortArrow('created_at', $sortField, $sortDirection) ?>
+                            <th><a title="Rikiuoti pagal registravimo datą" href="{{ url('faults/'.$type.'?sortField=created_at&sortDirection='.flipSort($sortDirection)) }}">Registravimo data</a> <?php showSortArrow('created_at', $sortField, $sortDirection) ?>
                             </th>
                             <th>Veiksmai</th>
                         </tr>
@@ -101,7 +101,7 @@ function showSortArrow($thisField, $currentField, $order) {
                             <td>{{ $fault->state }}</td>
                             <td>{{ $fault->created_at }}</td>
                             <td>
-                                <a href="{{url('/faults/'.$fault->id)}}" type="button" class="btn btn-sm btn-primary"><i class="glyphicon glyphicon-zoom-in"></i>Plačiau...</a>
+                                <a href="{{url('/faults/details/'.$fault->id.'?backlist='.$type)}}" type="button" class="btn btn-sm btn-primary"><i class="glyphicon glyphicon-zoom-in"></i>Plačiau...</a>
                                 <div type="button" class="btn btn-sm btn-danger"><i class="glyphicon glyphicon-remove"></i>Pašalinti</div>
                             </td>
                         </tr>

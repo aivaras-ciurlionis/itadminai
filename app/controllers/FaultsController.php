@@ -28,36 +28,44 @@ class FaultsController extends BaseController {
     }
     
     public function faultDetails($id){
-        
-        $fault = $this->fault->getSingleFault($id, Auth::user()->customer);
+        $backUrl = Input::get("backlist");
+        $fault = $this->fault->getSingleFault($id, Auth::user());
         
         if($fault === false){
             return Redirect::to('login');
         }
         
         return View::make('faults.details', 
-        ['fault' => $fault]);       
+        ['fault' => $fault, 'back' => $backUrl]);       
         
     }
-
     
-    public function getAllFaults() {
+    public function updateFault($id){
+        $newStatus = Input::get("state");
+        if($this->fault->updateFault(Auth::user(), $id, $newStatus)){
+          Session::flash('successMessage', 'Gedimo statusas pakeistas į '.$newStatus);  
+          return Redirect::to('faults/details/'.$id.'?backlist=asigned');   
+        } else {
+           return Redirect::to('login');            
+        }         
+    }
+    
+    public function getAllFaults($type) {
         $sortField = Input::get("sortField");
         $sortDirection = Input::get("sortDirection");
         $search = Input::get("search");
         $stateFilter = Input::get("stateFilter");
-        $faults;
         if (isset($sortField) || isset($search) || isset($stateFilter)) {
             if (!isset($sortDirection)) {
                 $sortDirection = 'ASC';
             }
-            $faults = $this->fault->getAllCustomerFaultsQuery(Auth::user()->customer, $sortField, $sortDirection, $search, $stateFilter)->paginate(4);
+            $faults = $this->fault->getAllQueryFaultsFor(Auth::user(), $type, $sortField, $sortDirection, $search, $stateFilter)->paginate(10);
         } else {
-            $faults = $this->fault->getAllCustomerFaults(Auth::user()->customer)->paginate(4);
+            $faults = $this->fault->getAllFaultsFor(Auth::user(), $type)->paginate(10);
         }
         
         return View::make('faults.list', ['faults' => $faults, 'sortField' => $sortField, 
-        'sortDirection' => $sortDirection, 'search' => $search, 'stateFilter' => $stateFilter]);
+        'sortDirection' => $sortDirection, 'search' => $search, 'stateFilter' => $stateFilter, 'type' => $type]);
     }
 
     public function createNewFault() {
@@ -65,11 +73,10 @@ class FaultsController extends BaseController {
         if ($validator->passes()) {
             $this->fault->createNewFault(Auth::user()->customer, Input::get('title'),
             Input::get('description'), Input::get('os'), Input::get('type'));
-            return Redirect::to('customer');
+            return Redirect::to('faults/created');
         } else {
             return Redirect::to('newfault')->withErrors($validator)->withInput();
         }
-
     }
 
 
