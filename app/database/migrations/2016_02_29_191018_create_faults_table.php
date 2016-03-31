@@ -17,12 +17,16 @@ class CreateFaultsTable extends Migration {
             $table->text('description');
             $table->string('operating_system');
             $table->enum('type', array('pc', 'lan'));
-            $table->enum('state', array('registered', 'inProgress', 'fixed'));
+            $table->enum('state', array('registered', 'inProgress', 'fixed', 'reopened'));
             $table->dateTime('started_fixing');
             $table->dateTime('finished_fixing');
+            $table->dateTime('reopened_time');
+            $table->integer('reaction_time');
+            $table->integer('fixing_time');            
             $table->timestamps();
             $table->integer('customer_id')->index();
             $table->integer('employee_id')->index();
+            $table->integer('fault_type_id')->index();
         });
     }
 

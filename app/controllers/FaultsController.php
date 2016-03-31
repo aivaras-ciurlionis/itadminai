@@ -7,49 +7,81 @@ class FaultsController extends BaseController {
 
     protected $fault;
     protected $rules = array('title' => 'required|max:50', 'type' => 'required', 'os' => 'required|max:50', 'description' => 'required|max:512');
-    
-    protected $messages = array(
-        'title.required' => 'Įveskite pavadinimą',
-        'title.max' => 'Pavadinimas negali būti ilgesnis nei :max simbolių',
-        'type.required' => 'Pasirinkite tipą',
-        'os.required' => 'Įveskite operacinę sistemą',
-        'os.max' => 'Operacinės sistemos pavadinimas negali būti ilgesnis nei :max simbolių',
-        'description.required' =>  'Aprašykite gedimą',
-        'description.max' => 'Gedimo aprašymas negali būti ilgesnis nei :max simbolių',
-    );
-    
+
+    protected $messages = array('title.required' => 'Įveskite pavadinimą', 'title.max' => 'Pavadinimas negali būti ilgesnis nei :max simbolių', 'type.required' => 'Pasirinkite tipą', 'os.required' => 'Įveskite operacinę sistemą', 'os.max' => 'Operacinės sistemos pavadinimas negali būti ilgesnis nei :max simbolių', 'description.required' => 'Aprašykite gedimą', 'description.max' => 'Gedimo aprašymas negali būti ilgesnis nei :max simbolių', );
+
     public function __construct(FaultRepository $fault) {
         $this->fault = $fault;
         $this->beforeFilter('csrf', array('on' => 'post'));
     }
 
     public function getNewFault() {
-        return View::make('faults.new', ['$errors' => null]);
+        $faultTypes = $this->fault->getAllFaultTypes();
+        return View::make('faults.new', ['$errors' => null, 'faultTypes' => $faultTypes]);
     }
-    
-    public function faultDetails($id){
+
+    public function faultDetails($id) {
         $backUrl = Input::get("backlist");
         $fault = $this->fault->getSingleFault($id, Auth::user());
-        
-        if($fault === false){
+
+        if ($fault === false) {
             return Redirect::to('login');
         }
-        
-        return View::make('faults.details', 
-        ['fault' => $fault, 'back' => $backUrl]);       
-        
+
+        return View::make('faults.details', ['fault' => $fault, 'back' => $backUrl]);
+
     }
     
-    public function updateFault($id){
+     public function reopenFault($id) {
+        $backUrl = Input::get("backlist");
+        $result = $this->fault->reopenFault(Auth::user(), $id);
+
+        if ($result === false) {
+            return Redirect::to('login');
+        }    
+           
+        Session::flash('successMessage', 'Gedimas atidarytas iš naujo.');
+        
+        return Redirect::to('faults/'.$backUrl);
+    }
+    
+    public function deleteFault($id) {
+        $backUrl = Input::get("backlist");
+        $result = $this->fault->deleteFault(Auth::user(), $id);
+
+        if ($result === false) {
+            return Redirect::to('login');
+        }   
+            
+        Session::flash('successMessage', 'Gedimas ištrintas');
+        
+        return Redirect::to('faults/'.$backUrl);
+    }   
+
+    public function updateFault($id) {
         $newStatus = Input::get("state");
-        if($this->fault->updateFault(Auth::user(), $id, $newStatus)){
-          Session::flash('successMessage', 'Gedimo statusas pakeistas į '.$newStatus);  
-          return Redirect::to('faults/details/'.$id.'?backlist=asigned');   
+
+        switch ($newStatus) {
+            case 'Registruota':
+                $newStatus = 'registered';
+                break;
+            case 'Taisoma':
+                $newStatus = 'inProgress';
+                break;
+            case 'Sutvarkyta':
+                $newStatus = 'fixed';
+                break;            
+        }
+
+
+        if ($this->fault->updateFault(Auth::user(), $id, $newStatus)) {
+            Session::flash('successMessage', 'Gedimo statusas pakeistas į '.$newStatus);
+            return Redirect::to('faults/details/'.$id.'?backlist=asigned');
         } else {
-           return Redirect::to('login');            
-        }         
+            return Redirect::to('login');
+        }
     }
-    
+
     public function getAllFaults($type) {
         $sortField = Input::get("sortField");
         $sortDirection = Input::get("sortDirection");
@@ -63,9 +95,8 @@ class FaultsController extends BaseController {
         } else {
             $faults = $this->fault->getAllFaultsFor(Auth::user(), $type)->paginate(10);
         }
-        
-        return View::make('faults.list', ['faults' => $faults, 'sortField' => $sortField, 
-        'sortDirection' => $sortDirection, 'search' => $search, 'stateFilter' => $stateFilter, 'type' => $type]);
+
+        return View::make('faults.list', ['faults' => $faults, 'sortField' => $sortField, 'sortDirection' => $sortDirection, 'search' => $search, 'stateFilter' => $stateFilter, 'type' => $type]);
     }
 
     public function createNewFault() {
@@ -73,6 +104,7 @@ class FaultsController extends BaseController {
         if ($validator->passes()) {
             $this->fault->createNewFault(Auth::user()->customer, Input::get('title'),
             Input::get('description'), Input::get('os'), Input::get('type'));
+            Session::flash('successMessage', 'Gedimas "'.Input::get('title').'" užregistruotas!');
             return Redirect::to('faults/created');
         } else {
             return Redirect::to('newfault')->withErrors($validator)->withInput();

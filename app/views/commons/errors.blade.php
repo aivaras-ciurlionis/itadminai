@@ -12,3 +12,13 @@
         </ul>
     </div>
 @endif
+@if(isset($errorMessage)){
+  <div class="alert alert-danger">
+        <strong>{{$errorMessage}}</strong> 
+    </div>
+@endif
+}
+
+
+
+

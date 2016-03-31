@@ -25,12 +25,18 @@ function showSortArrow($thisField, $currentField, $order) {
 <div class="container">
     <div class="panel panel-default">
         <div class="panel-heading">
+            @if($type === 'created')
             <h2> Jūsų užregistruoti gedimai: </h2>
+            @else
+            <h2> Jums priskirti gedimai: </h2>    
+            @endif
         </div>
 
-
-
         <div class="panel-body">
+            
+            @include('common.errors')
+            @include('common.success')          
+
 
             @if(isset($sortField) || isset($search) || isset($stateFilter))
             <div class="">
@@ -77,8 +83,7 @@ function showSortArrow($thisField, $currentField, $order) {
                         <tr>
                             <th><a title="Rikiuoti pagal pavadinimą" href="{{ url('faults/'.$type.'?sortField=title&sortDirection='.flipSort($sortDirection)) }}">Pavadinimas</a> <?php showSortArrow('title', $sortField, $sortDirection) ?>
                             </th>
-                            <th><a title="Rikiuoti pagal tipą" href="{{ url('faults/'.$type.'?sortField=type&sortDirection='.flipSort($sortDirection)) }}">Tipas</a> <?php showSortArrow('type', $sortField, $sortDirection) ?>
-                            </th>
+                            <th>Tipas</th>
                             <th><a title="Rikiuoti pagal OS" href="{{ url('faults/'.$type.'?sortField=operating_system&sortDirection='.flipSort($sortDirection)) }}">Os</a> <?php showSortArrow('operating_system', $sortField, $sortDirection) ?>
                             </th>
                             <th><a title="Rikiuoti pagal būseną" href="{{ url('faults/'.$type.'?sortField=state&sortDirection='.flipSort($sortDirection)) }}">Būsena</a> <?php showSortArrow('state', $sortField, $sortDirection) ?>
@@ -88,27 +93,48 @@ function showSortArrow($thisField, $currentField, $order) {
                             <th>Veiksmai</th>
                         </tr>
                     </thead>
+                    
+                    
                     <tbody>
                         @foreach ($faults as $fault)
                         <tr>
-                            <td>{{ $fault->title }}</td>
-                            @if($fault->type === 'pc')
-                            <td> <span class="badge badge-pc">PC</span></td>
-                            @else
-                            <td> <span class="badge badge-lan">LAN</span></td>
-                            @endif
+                            <td>{{$fault->title }}</td>                         
+                            <td>{{$fault->faultType['name']}}</td>
                             <td>{{ $fault->operating_system }}</td>
-                            <td>{{ $fault->state }}</td>
+                            @if($fault->state === 'registered')
+                               <td><span class="badge badge-registered">Registruota</span></td>
+                            @elseif($fault->state === 'inProgress')              
+                               <td><span class="badge badge-inProgress">Taisoma</span></td>         
+                            @elseif($fault->state === 'fixed') 
+                               <td><span class="badge badge-fixed">Sutvarkyta</span></td>
+                            @else
+                               <td><span class="badge badge-reopened">Atidaryta iš naujo</span></td>                           
+                            @endif
+                          
                             <td>{{ $fault->created_at }}</td>
                             <td>
                                 <a href="{{url('/faults/details/'.$fault->id.'?backlist='.$type)}}" type="button" class="btn btn-sm btn-primary"><i class="glyphicon glyphicon-zoom-in"></i>Plačiau...</a>
-                                <div type="button" class="btn btn-sm btn-danger"><i class="glyphicon glyphicon-remove"></i>Pašalinti</div>
+                               
+                               @if(userHasRole(Auth::user()->roles, 'Customer'))   
+                                                      
+                                @if($fault->state === 'registered')
+                                    <a href="{{url('/faults/delete/'.$fault->id.'?backlist='.$type)}}" type="button" class="btn btn-sm btn-danger"><i class="glyphicon glyphicon-remove"></i>Pašalinti</a>
+                                    @endif
+                                    @if($fault->state === 'fixed')
+                                    <a href="{{url('/faults/reopen/'.$fault->id.'?backlist='.$type)}}" type="button" class="btn btn-sm btn-info"><i class="glyphicon glyphicon-repeat"></i>Atidaryti iš naujo</a>
+                                    @endif                  
+                                @endif
+                                
+                                @if(userHasRole(Auth::user()->roles, 'SysAdmin'))   
+                                  <a href="{{url('/faults/delete/'.$fault->id.'?backlist='.$type)}}" type="button" class="btn btn-sm btn-danger"><i class="glyphicon glyphicon-remove"></i>Pašalinti</a>                                 
+                                @endif
+                                       
                             </td>
                         </tr>
                         @endforeach
                     </tbody>
                 </table>
-            </div>
+            </div>           
             @else
             <div class="alert alert-warning">
                 Gedimų nerasta...

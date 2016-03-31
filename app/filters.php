@@ -53,7 +53,7 @@ Route::filter('auth', function() {
 });
 
 
-Route::filter('customer', function() {    
+Route::filter('customer',  function() {    
     
     if (Auth::guest()) {
        return Redirect::guest('login');       
@@ -66,6 +66,51 @@ Route::filter('customer', function() {
     }
     
 });
+
+
+Route::filter('customerAdmin',  function() {    
+    
+    if (Auth::guest()) {
+       return Redirect::guest('login');       
+    }
+       
+    $roles = Auth::user()->roles();   
+    
+    if (!userHasRole(Auth::user()->roles, 'Customer') &&  !userHasRole(Auth::user()->roles, 'SysAdmin')){
+          return Redirect::guest('login');  
+    }
+    
+});
+
+
+Route::filter('employee',  function() {    
+    
+    if (Auth::guest()) {
+       return Redirect::guest('login');       
+    }
+       
+    $roles = Auth::user()->roles();   
+    
+    if (!userHasRole(Auth::user()->roles, 'Employee')){
+          return Redirect::guest('login');  
+    }
+    
+});
+
+Route::filter('customerEmployee',  function() {    
+    
+    if (Auth::guest()) {
+       return Redirect::guest('login');       
+    }
+       
+    $roles = Auth::user()->roles();   
+    
+    if (!userHasRole(Auth::user()->roles, 'Customer') &&  !userHasRole(Auth::user()->roles, 'Employee')){
+          return Redirect::guest('login');  
+    }
+    
+});
+
 
 
 Route::filter('auth.basic', function() {

@@ -7,8 +7,8 @@ function getRolesOfUser($roles) {
     $rolesNames = '';
     foreach($roles as $role) {
         $rolesNames = $rolesNames.$role->name.", ";
-    }    
-    return substr($rolesNames, 0, strlen($rolesNames)-2) ;
+    }
+    return substr($rolesNames, 0, strlen($rolesNames) - 2);
 }
 
 
@@ -37,8 +37,8 @@ function getRolesOfUser($roles) {
     <!-- Styles -->
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet"> {{--
     <link href="{{ elixir('css/app.css') }}" rel="stylesheet"> --}}
-    <link rel="stylesheet" href="{{ URL::asset('css/custom-style.css') }}" />
-
+    <link rel="stylesheet" href="{{ URL::asset('css/bootstrap-multiselect.css') }}" />
+        {{ HTML::style('css/custom-style.css') }}
     <style>
         body {
             font-family: 'Lato';
@@ -72,13 +72,16 @@ function getRolesOfUser($roles) {
             <div class="collapse navbar-collapse" id="app-navbar-collapse">
                 <!-- Left Side Of Navbar -->
                 <ul class="nav navbar-nav">
-                    @if(!Auth::guest() && userHasRole(Auth::user()->roles, 'Customer'))
+               
                     <li class="menu-item"><a href="{{ url('/customer') }}">Pradžia</a></li>
-                    <li class="menu-item"><a href="{{ url('/customer/settings') }}">Nustatymai</a></li>
+                     @if(!Auth::guest() && userHasRole(Auth::user()->roles, 'Customer'))
+                    <li class="menu-item"><a href="{{ url('/customer/settings') }}">Nustatymai</a></li>                   
                     <li class="menu-item"><a href="{{ url('/newfault') }}">Naujas gedimas</a></li>
                     <li class="menu-item"><a href="{{ url('/faults/created') }}">Registruoti gedimai</a></li>
-                    @endif
+                    @endif 
+                    
                     @if(!Auth::guest() && userHasRole(Auth::user()->roles, 'Employee'))
+                    <li class="menu-item"><a href="{{ url('/employee/settings') }}">Nustatymai</a></li>   
                     <li class="menu-item"><a href="{{ url('/faults/asigned') }}">Priskirti gedimai</a></li>
                     @endif
                 </ul>
@@ -102,14 +105,16 @@ function getRolesOfUser($roles) {
                 </ul>
             </div>
         </div>
-    </nav> 
+    </nav>
     @yield('content')
 
     <!-- JavaScripts -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
-    {{--
+    {{ HTML::script('js/bootstrap-multiselect.js') }} {{ HTML::script('js/custom.js') }} {{--
     <script src="{{ elixir('js/app.js') }}"></script> --}}
+
+
 </body>
 
 </html>

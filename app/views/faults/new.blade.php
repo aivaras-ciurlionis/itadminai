@@ -22,12 +22,12 @@
                     <label for="type" class="col-sm-2 control-label">Gedimo tipas:</label>
                     <div class="col-sm-10">
                         <select class="form-control" id="type" name="type">
-                            <option>PC</option>
-                            <option>LAN</option>
+                              @foreach ($faultTypes as $faultType)
+                              <option>{{$faultType->name}}</option>                              
+                              @endforeach
                         </select>
                     </div>
                 </div>
-
                 <div class="form-group">
                     <label for="city" class="col-sm-2 control-label">Operacinė sistema</label>
                     <div class="col-sm-10">

@@ -12,3 +12,8 @@
         </ul>
     </div>
 @endif
+@if(Session::has('errorMessage'))
+<div class="alert alert-danger">
+    <strong>{{ Session::get('errorMessage')}}</strong>
+</div>
+@endif

@@ -23,12 +23,24 @@ Route::get('/logout', 'AuthController@logout');
 Route::get('/register', 'AuthController@register');
 Route::post('/register', 'AuthController@storeUser');
 
-Route::get('/customer', array ('before' => 'customer', 'uses' => 'CustomerDataController@home'));
+Route::get('/registerEmployee', 'AuthController@registerEmployee');
+Route::post('/registerEmployee', 'AuthController@storeEmployee');
+
+Route::get('/customer', array ('before' => 'customerEmployee', 'uses' => 'CustomerDataController@home'));
 Route::get('/customer/settings', array ('before' => 'customer', 'uses' => 'CustomerDataController@getSettings'));
 Route::post('/customer/settings', array ('before' => 'customer', 'uses' => 'CustomerDataController@postSettings'));
 
+
+Route::get('/employee/settings', array ('before' => 'employee', 'uses' => 'CustomerDataController@getEmployeeSettings'));
+Route::post('/employee/settings', array ('before' => 'employee', 'uses' => 'CustomerDataController@postEmployeeSettings'));
+
+
+
 Route::get('/newfault', array('before' => 'customer', 'uses' => 'FaultsController@getNewFault'));
-Route::get('/faults/{type}', array('before' => 'customer', 'uses' => 'FaultsController@getAllFaults'));
+Route::get('/faults/{type}', array('before' => 'customerEmployee', 'uses' => 'FaultsController@getAllFaults'));
 Route::post('/savefault', array('before' => 'customer', 'uses' => 'FaultsController@createNewFault'));
-Route::post('/updateFault/{id}', array('before' => 'customer', 'uses' => 'FaultsController@updateFault'));
-Route::get('/faults/details/{id}', array('before' => 'customer', 'uses' => 'FaultsController@faultDetails'));
+Route::post('/updateFault/{id}', array('before' => 'employee', 'uses' => 'FaultsController@updateFault'));
+Route::get('/faults/details/{id}', array('before' => 'customerEmployee', 'uses' => 'FaultsController@faultDetails'));
+
+Route::get('/faults/delete/{id}', array('before' => 'customerAdmin', 'uses' => 'FaultsController@deleteFault'));
+Route::get('/faults/reopen/{id}', array('before' => 'customer', 'uses' => 'FaultsController@reopenFault'));
