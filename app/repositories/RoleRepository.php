@@ -23,7 +23,6 @@ class RoleRepository {
         if ($roleName === "Employee") {
             $this->createEmployee($user);
         }
-
     }
 
     public function createCustomer(User $user) {

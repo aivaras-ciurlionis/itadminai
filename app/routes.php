@@ -26,7 +26,7 @@ Route::post('/register', 'AuthController@storeUser');
 Route::get('/registerEmployee', 'AuthController@registerEmployee');
 Route::post('/registerEmployee', 'AuthController@storeEmployee');
 
-Route::get('/customer', array ('before' => 'customerEmployee', 'uses' => 'CustomerDataController@home'));
+Route::get('/homepage', array ('before' => 'auth', 'uses' => 'CustomerDataController@home'));
 Route::get('/customer/settings', array ('before' => 'customer', 'uses' => 'CustomerDataController@getSettings'));
 Route::post('/customer/settings', array ('before' => 'customer', 'uses' => 'CustomerDataController@postSettings'));
 
@@ -37,10 +37,21 @@ Route::post('/employee/settings', array ('before' => 'employee', 'uses' => 'Cust
 
 
 Route::get('/newfault', array('before' => 'customer', 'uses' => 'FaultsController@getNewFault'));
-Route::get('/faults/{type}', array('before' => 'customerEmployee', 'uses' => 'FaultsController@getAllFaults'));
+Route::get('/faults/{type}', array('before' => 'auth', 'uses' => 'FaultsController@getAllFaults'));
 Route::post('/savefault', array('before' => 'customer', 'uses' => 'FaultsController@createNewFault'));
 Route::post('/updateFault/{id}', array('before' => 'employee', 'uses' => 'FaultsController@updateFault'));
 Route::get('/faults/details/{id}', array('before' => 'customerEmployee', 'uses' => 'FaultsController@faultDetails'));
 
 Route::get('/faults/delete/{id}', array('before' => 'customerAdmin', 'uses' => 'FaultsController@deleteFault'));
 Route::get('/faults/reopen/{id}', array('before' => 'customer', 'uses' => 'FaultsController@reopenFault'));
+
+
+Route::get('/users/customers', array('before' => 'admin', 'uses' => 'UsersController@getCustomers'));
+Route::get('/users/employees', array('before' => 'admin', 'uses' => 'UsersController@getEmployees'));
+
+
+
+Route::get('/users/setPassword/{id}', array('before' => 'admin', 'uses' => 'UsersController@setPassword'));
+Route::get('/users/disableUser/{id}', array('before' => 'admin', 'uses' => 'UsersController@disableUser'));
+Route::get('/users/enableUser/{id}', array('before' => 'admin', 'uses' => 'UsersController@enableUser'));
+Route::post('/users/savePassword/{id}', array('before' => 'admin', 'uses' => 'UsersController@saveNewPassword'));

@@ -72,17 +72,29 @@ function getRolesOfUser($roles) {
             <div class="collapse navbar-collapse" id="app-navbar-collapse">
                 <!-- Left Side Of Navbar -->
                 <ul class="nav navbar-nav">
-               
-                    <li class="menu-item"><a href="{{ url('/customer') }}">Pradžia</a></li>
-                     @if(!Auth::guest() && userHasRole(Auth::user()->roles, 'Customer'))
-                    <li class="menu-item"><a href="{{ url('/customer/settings') }}">Nustatymai</a></li>                   
-                    <li class="menu-item"><a href="{{ url('/newfault') }}">Naujas gedimas</a></li>
-                    <li class="menu-item"><a href="{{ url('/faults/created') }}">Registruoti gedimai</a></li>
-                    @endif 
-                    
-                    @if(!Auth::guest() && userHasRole(Auth::user()->roles, 'Employee'))
-                    <li class="menu-item"><a href="{{ url('/employee/settings') }}">Nustatymai</a></li>   
-                    <li class="menu-item"><a href="{{ url('/faults/asigned') }}">Priskirti gedimai</a></li>
+                    @if(!Auth::guest())               
+                        <li class="menu-item"><a href="{{ url('/homepage') }}">Pradžia</a></li>
+                        @if(userHasRole(Auth::user()->roles, 'Customer'))
+                        <li class="menu-item"><a href="{{ url('/customer/settings') }}">Nustatymai</a></li>                   
+                        <li class="menu-item"><a href="{{ url('/newfault') }}">Naujas gedimas</a></li>
+                        <li class="menu-item"><a href="{{ url('/faults/created') }}">Registruoti gedimai</a></li>
+                        @endif 
+                        
+                        @if(userHasRole(Auth::user()->roles, 'Employee'))
+                        <li class="menu-item"><a href="{{ url('/employee/settings') }}">Nustatymai</a></li>   
+                        <li class="menu-item"><a href="{{ url('/faults/asigned') }}">Priskirti gedimai</a></li>
+                        @endif
+                        
+                         @if(userHasRole(Auth::user()->roles, 'SysAdmin'))
+                        <li class="menu-item"><a href="{{ url('/users/customers') }}">Vartotojai</a></li>   
+                        <li class="menu-item"><a href="{{ url('/users/employees') }}">Darbuotojai</a></li>
+                        <li class="menu-item"><a href="{{ url('/users/new') }}">Naujas vartotojas</a></li>
+                        <li class="menu-item"><a href="{{ url('/faults/all') }}">Gedimai</a></li>
+                        <li class="menu-item"><a href="{{ url('/faults/types') }}">Gedimų tipai</a></li>
+                        @endif
+                        
+                        
+                        
                     @endif
                 </ul>
 

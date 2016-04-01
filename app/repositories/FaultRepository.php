@@ -114,7 +114,7 @@ class FaultRepository {
 
     public function getAllFaultsFor(User $user, $type) {
         if ($this->userIsInRole($user->roles, "SysAdmin") && $type === "all") {
-            return Fault::get();
+            return Fault::selectRaw('*');
         } else if ($this->userIsInRole($user->roles, "Employee") && $type === "asigned") {
             return Fault::where('employee_id', $user->employee->id);
         } else if ($this->userIsInRole($user->roles, "Customer") && $type === "created") {
@@ -130,7 +130,7 @@ class FaultRepository {
         }
 
         if ($this->userIsInRole($user->roles, "SysAdmin") && $type === "all") {
-            $faults = Fault::get();
+            $faults = Fault;
         } else if ($this->userIsInRole($user->roles, "Employee") && $type === "asigned") {
             $faults = Fault::where('employee_id', $user->employee->id);
         } else if ($this->userIsInRole($user->roles, "Customer") && $type === "created") {

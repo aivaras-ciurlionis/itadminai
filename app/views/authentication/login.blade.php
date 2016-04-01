@@ -9,6 +9,7 @@
                 <div class="panel-body">
                     
                     @include('common.messagebad')
+                    @include('common.errors')
 
                     <form class="form-horizontal" role="form" method="POST" action="{{ url('/login') }}">
 

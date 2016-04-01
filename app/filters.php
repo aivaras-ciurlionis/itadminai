@@ -49,6 +49,12 @@ Route::filter('auth', function() {
         } else {
             return Redirect::guest('login');
         }
+    }else {
+        if (Auth::user()->disabled){
+            Session::flash('errorMessage', 'Jūsų paskyra užblokuota.');
+            Auth::logout();
+            return Redirect::guest('login');
+        } 
     }
 });
 
@@ -57,13 +63,19 @@ Route::filter('customer',  function() {
     
     if (Auth::guest()) {
        return Redirect::guest('login');       
+    } else {
+        if (Auth::user()->disabled){
+            Session::flash('errorMessage', 'Jūsų paskyra užblokuota.');
+            Auth::logout();
+            return Redirect::guest('login');
+        } 
     }
        
     $roles = Auth::user()->roles();   
     
     if (!userHasRole(Auth::user()->roles, 'Customer')){
           return Redirect::guest('login');  
-    }
+    } 
     
 });
 
@@ -72,6 +84,12 @@ Route::filter('customerAdmin',  function() {
     
     if (Auth::guest()) {
        return Redirect::guest('login');       
+    }else {
+        if (Auth::user()->disabled){
+            Session::flash('errorMessage', 'Jūsų paskyra užblokuota.');
+            Auth::logout();
+            return Redirect::guest('login');
+        } 
     }
        
     $roles = Auth::user()->roles();   
@@ -87,6 +105,12 @@ Route::filter('employee',  function() {
     
     if (Auth::guest()) {
        return Redirect::guest('login');       
+    }else {
+        if (Auth::user()->disabled){
+            Session::flash('errorMessage', 'Jūsų paskyra užblokuota.');
+            Auth::logout();
+            return Redirect::guest('login');
+        } 
     }
        
     $roles = Auth::user()->roles();   
@@ -97,10 +121,38 @@ Route::filter('employee',  function() {
     
 });
 
+Route::filter('admin',  function() {    
+    
+    if (Auth::guest()) {
+       return Redirect::guest('login');       
+    }else {
+        if (Auth::user()->disabled){
+            Session::flash('errorMessage', 'Jūsų paskyra užblokuota.');
+            Auth::logout();
+            return Redirect::guest('login');
+        } 
+    }
+       
+    $roles = Auth::user()->roles();   
+    
+    if (!userHasRole(Auth::user()->roles, 'SysAdmin')){
+          return Redirect::guest('login');  
+    }
+    
+});
+
+
+
 Route::filter('customerEmployee',  function() {    
     
     if (Auth::guest()) {
        return Redirect::guest('login');       
+    } else {
+        if (Auth::user()->disabled){
+            Session::flash('errorMessage', 'Jūsų paskyra užblokuota.');
+            Auth::logout();
+            return Redirect::guest('login');
+        } 
     }
        
     $roles = Auth::user()->roles();   
