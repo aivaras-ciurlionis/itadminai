@@ -41,6 +41,7 @@ class FaultRepository {
         ->join('employee_fault_type', 'employees.id', '=', 'employee_fault_type.employee_id')
         ->leftJoin('faults', 'faults.employee_id', '=', 'employees.id')
         ->where('employee_fault_type.fault_type_id', '=', $faultType->id)
+        ->where('employees.is_active', '=', '1')
         ->groupBy('employees.id')->get();
         
          $withFixedFaults = Employee::selectRaw('employees.id, count(faults.employee_id) as count')
@@ -48,6 +49,7 @@ class FaultRepository {
         ->leftJoin('faults', 'faults.employee_id', '=', 'employees.id')
         ->whereRaw('`faults`.`state` = \'fixed\'')
         ->where('employee_fault_type.fault_type_id', '=', $faultType->id)
+        ->where('employees.is_active', '=', '1')
         ->groupBy('employees.id')->get();
         
         $freeEmployee = null;
@@ -67,10 +69,11 @@ class FaultRepository {
         $selectedEmployee = null;
       
         if ($freeEmployee == null) {       
-            $employeeOldesAsigned = Employee::selectRaw('id, min(last_asignment) as min')
+            $employeeOldesAsigned = Employee::selectRaw('id, last_asignment')
             ->join('employee_fault_type', 'employees.id', '=', 'employee_fault_type.employee_id')
-            ->where('last_asignment', '=', 'min')
-            ->where('employee_fault_type.fault_type_id', '=', $faultType->id)            
+            ->where('employee_fault_type.fault_type_id', '=', $faultType->id)    
+            ->where('employees.is_active', '=', true)
+            ->orderBy('last_asignment')    
             ->first();        
             $selectedEmployee = $employeeOldesAsigned;           
         } else {
@@ -89,7 +92,6 @@ class FaultRepository {
         
         $employee = Employee::find($selectedEmployee->id);
         $employee->last_asignment = $mytime->toDateTimeString();
-        $employee->salary = 35;  
         $employee->save();
     }
 
@@ -114,7 +116,13 @@ class FaultRepository {
 
     public function getAllFaultsFor(User $user, $type) {
         if ($this->userIsInRole($user->roles, "SysAdmin") && $type === "all") {
-            return Fault::selectRaw('*');
+            return Fault::selectRaw('faults.id, operating_system, fault_types.name as faultType, state, faults.created_at, title, cUser.email as cEmail, eUser.email as eEmail')
+            ->join('customers','customers.id', '=', 'faults.customer_id')
+            ->join('users as cUser','cUser.id', '=', 'customers.user_id')
+            ->join('employees','employees.id', '=', 'faults.employee_id')
+            ->join('users as eUser','eUser.id', '=', 'employees.user_id')
+            ->join('fault_types','fault_types.id', '=', 'faults.fault_type_id');           
+            
         } else if ($this->userIsInRole($user->roles, "Employee") && $type === "asigned") {
             return Fault::where('employee_id', $user->employee->id);
         } else if ($this->userIsInRole($user->roles, "Customer") && $type === "created") {
@@ -122,7 +130,7 @@ class FaultRepository {
         }
     }
 
-    public function getAllQueryFaultsFor(User $user, $type, $field, $direction, $search, $stateSearch) {
+    public function getAllQueryFaultsFor(User $user, $type, $field, $direction, $search, $userFilter) {
 
         $sortDirection = 'ASC';
         if ($direction === 'DESC') {
@@ -130,19 +138,26 @@ class FaultRepository {
         }
 
         if ($this->userIsInRole($user->roles, "SysAdmin") && $type === "all") {
-            $faults = Fault;
+            $faults = Fault::selectRaw('faults.id, operating_system, fault_types.name as faultType, state, faults.created_at, title, cUser.email as cEmail, eUser.email as eEmail')
+            ->join('customers','customers.id', '=', 'faults.customer_id')
+            ->join('users as cUser','cUser.id', '=', 'customers.user_id')
+            ->join('employees','employees.id', '=', 'faults.employee_id')
+            ->join('users as eUser','eUser.id', '=', 'employees.user_id')
+            ->join('fault_types','fault_types.id', '=', 'faults.fault_type_id');  
+            
+            if (isset($userFilter)) {
+                $faults = $faults->where('eUser.email', $userFilter);
+            }
+  
         } else if ($this->userIsInRole($user->roles, "Employee") && $type === "asigned") {
             $faults = Fault::where('employee_id', $user->employee->id);
         } else if ($this->userIsInRole($user->roles, "Customer") && $type === "created") {
             $faults = Fault::where('customer_id', $user->customer->id);
         }
 
-        if (isset($stateSearch)) {
-            $faults = $faults->where('state', $stateSearch);
-        }
 
         if (isset($search)) {
-            $faults = $faults->where('title', 'like', $search);
+            $faults = $faults->where('title', 'like', "%$search%");
         }
 
         if (isset($field)) {
@@ -259,6 +274,13 @@ class FaultRepository {
     }     
     
     
+    public function setUserForFault($faultId, $userEmail){               
+        $fault =  Fault::find($faultId);
+        $employee = User::where('email', '=', $userEmail)->first()->employee;
+        $fault->employee_id = $employee->id;       
+        $fault->save();        
+    }    
+    
     
 
     public function getAllFaultTypes() {
@@ -268,6 +290,14 @@ class FaultRepository {
     public function getAllFaultTypesForUser(User $user) {
         return $user->employee->faultTypes->lists('name');
     }
+    
+    public function createNewType($name) {
+        $type = new FaultType();
+        $type-> name = $name;
+        $type->save();      
+    }
+    
+    
     
     public function getAllCustomerFaultsQuery(Customer $customer, $field, $direction, $search, $stateSearch) {
         $sortDirection = 'ASC';

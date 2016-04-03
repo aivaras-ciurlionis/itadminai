@@ -19,6 +19,22 @@ function showSortArrow($thisField, $currentField, $order) {
     }
 }
 
+function toReadableTime($timeInSeconds){          
+    
+    if ($timeInSeconds < 60){
+        return round($timeInSeconds).' s.';
+    }
+    
+    if ($timeInSeconds < 3600){
+        return (floor($timeInSeconds/60)).' min. '.($timeInSeconds%60).' s.';
+    }       
+    
+    if ($timeInSeconds >= 3600){
+        return   (floor($timeInSeconds/3600)).' h. '.(floor(($timeInSeconds/60)%60)).' min. '.($timeInSeconds%60).' s.';
+    }    
+    
+}
+
 ?>
 <!-- Bootstrap Boilerplate... -->
 
@@ -60,21 +76,26 @@ function showSortArrow($thisField, $currentField, $order) {
                             </th>
                             <th><a title="Rikiuoti el. paštą" href="{{ url('users/employees?sortField=email&sortDirection='.flipSort($sortDirection)) }}">El. Paštas</a> <?php showSortArrow('email', $sortField, $sortDirection) ?>
                             </th>
-                            <th><a title="Rikiuoti pagal uždarbį" href="{{ url('users/employees?sortField=salary&sortDirection='.flipSort($sortDirection)) }}">Uždarbis</a> <?php showSortArrow('salary', $sortField, $sortDirection) ?>
-                            </th>    
+                          
                             <th><a title="Rikiuoti pagal registravimosi datą" href="{{ url('users/employees?sortField=employees.created_at&sortDirection='.flipSort($sortDirection)) }}">Registr. data</a> <?php showSortArrow('employees.created_at', $sortField, $sortDirection) ?>
                             </th>                             
                                                     
                             <th>                                
-                               <a title="Rikiuoti pagal registravimosi datą" href="{{ url('users/employees?sortField=disabled&sortDirection='.flipSort($sortDirection)) }}">Būsena</a> <?php showSortArrow('disabled', $sortField, $sortDirection) ?>    
+                               <a title="Rikiuoti pagal būseną" href="{{ url('users/employees?sortField=disabled&sortDirection='.flipSort($sortDirection)) }}">Būsena</a> <?php showSortArrow('disabled', $sortField, $sortDirection) ?>    
                             </th>
                             
                             <th>
-                               <a title="Rikiuoti pagal registravimosi datą" href="{{ url('users/employees?sortField=is_active&sortDirection='.flipSort($sortDirection)) }}">Ar priskiriami gedimai</a> <?php showSortArrow('is_active', $sortField, $sortDirection) ?>   
+                               <a title="Rikiuoti pagal gedimų priskyrimą" href="{{ url('users/employees?sortField=is_active&sortDirection='.flipSort($sortDirection)) }}">Ar priskiriami gedimai</a> <?php showSortArrow('is_active', $sortField, $sortDirection) ?>   
                             </th>
                             
+                            <th>
+                               <a title="Rikiuoti pagal vidutinį reakcijos laiką" href="{{ url('users/employees?sortField=avg_reaction_time&sortDirection='.flipSort($sortDirection)) }}">Vid. reakcijos laikas</a> <?php showSortArrow('avg_reaction_time', $sortField, $sortDirection) ?>   
+                            </th>
                             
-                            
+                            <th>
+                               <a title="Rikiuoti pagal vidutinį taisymo laiką" href="{{ url('users/employees?sortField=avg_fixing_time&sortDirection='.flipSort($sortDirection)) }}">Vid. taisymo laikas</a> <?php showSortArrow('avg_fixing_time', $sortField, $sortDirection) ?>   
+                            </th>                           
+
                             <th>Veiksmai</th>
                         </tr>
                     </thead>
@@ -83,8 +104,7 @@ function showSortArrow($thisField, $currentField, $order) {
                         <tr>
                             <td>{{$user->user->name}}</td>
                             <td>{{$user->user->email}}</td>
-                            <td>{{$user->salary}}</td>
-                            
+                           
                             <td>{{$user->created_at}}</td>
       
                             @if($user->disabled)
@@ -98,19 +118,29 @@ function showSortArrow($thisField, $currentField, $order) {
                             <td><span class="badge badge-inProgress">Taip</span></td>
                             @else 
                            <td><span class="badge badge-registered">Ne</span></td>
-                            @endif
-                   
-                            <td> 
+                            @endif                                             
+                                
+                            <td>{{toReadableTime($user->avg_reaction_time)}}</td>
+                            <td>{{toReadableTime($user->avg_fixing_time)}}</td>    
+                                
+                            <td>                                 
                             <div class = "btn-group-vertical">                                    
-                                <a href="{{url('users/details/'.$user->id.'?backlist=employees')}}" type="button" class="btn btn-sm btn-primary"><i class="glyphicon glyphicon-zoom-in"></i>Plačiau...</a>                           
-                                <a href="{{url('users/setPassword/'.$user->id.'?backlist=employees')}}" type="button" class="btn btn-sm btn-info"><i class="glyphicon glyphicon-lock"></i>Pakeisti slaptažodį</a>
+                                <a href="{{url('users/details/'.$user->user->id.'?backlist=employees')}}" type="button" class="btn btn-sm btn-primary"><i class="glyphicon glyphicon-zoom-in"></i>Plačiau...</a>                           
+                                <a href="{{url('users/setPassword/'.$user->user->id.'?backlist=employees')}}" type="button" class="btn btn-sm btn-info"><i class="glyphicon glyphicon-lock"></i>Pakeisti slaptažodį</a>
                                 @if($user->disabled)
-                                <a href="{{url('users/enableUser/'.$user->id.'?backlist=employees')}}" type="button" class="btn btn-sm btn-primary"><i class="glyphicon glyphicon-lock"></i>Atblokuoti vartotoją</a>
+                                <a href="{{url('users/enableUser/'.$user->user->id.'?backlist=employees')}}" type="button" class="btn btn-sm btn-default"><i class="glyphicon glyphicon-lock"></i>Atblokuoti vartotoją</a>
                                 @else 
-                                <a href="{{url('users/disableUser/'.$user->id.'?backlist=employees')}}" type="button" class="btn btn-sm btn-danger"><i class="glyphicon glyphicon-remove-circle"></i>Blokuoti vartotoją</a>
-                                @endif
-                                </td>
+                                <a href="{{url('users/disableUser/'.$user->user->id.'?backlist=employees')}}" type="button" class="btn btn-sm btn-danger"><i class="glyphicon glyphicon-remove-circle"></i>Blokuoti vartotoją</a>
+                                @endif      
+                                
+                                @if($user->is_active)
+                                <a href="{{url('users/disableAsignment/'.$user->user->id.'?backlist=employees')}}" type="button" class="btn btn-sm btn-warning"><i class="glyphicon glyphicon-chevron-down"></i>Nebepriskirti gedimų</a>
+                                @else 
+                                <a href="{{url('users/enableAsignment/'.$user->user->id.'?backlist=employees')}}" type="button" class="btn btn-sm btn-success"><i class="glyphicon glyphicon-chevron-up"></i>Priskirti gedimus</a>
+                                @endif                                  
+                                                     
                             </div>
+                            </td>
                         </tr>
                         @endforeach
                     </tbody>

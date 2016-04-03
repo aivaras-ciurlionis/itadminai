@@ -7,7 +7,8 @@ class CustomerDataController extends BaseController {
 
     protected $customer;
     protected $fault;
-    protected $rulesCustomer = array('name' => 'required|min:2|max:50',
+    protected $rulesCustomer = array(
+     'name' => 'required|min:2|max:50',
      'city' => 'required|min:2|max:50', 
      'country' => 'required|min:2|max:50');
      

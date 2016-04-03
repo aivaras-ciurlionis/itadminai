@@ -6,7 +6,27 @@ use app\repositories\FaultRepository;
 
 class AuthController extends BaseController {
 
-    protected $userRules = array('name' => 'required|alpha|min:2', 'email' => 'required|email|unique:users', 'password' => 'required|between:6,30|confirmed', 'password_confirmation' => 'required|between:6,30');
+     protected $userRules = array(
+        'password' => 'required|between:6,30|confirmed',
+        'password_confirmation' => 'required|between:6,30', 
+        'name' => 'required|min:2|max:50',
+        'email' => 'required|email|unique:users'      
+    );      
+        
+    protected $userMessages = array(
+        'email.required' => 'Įveskite el. paštą',
+        'email.email' => 'Neatpažįstamas el. pašto formatas',       
+        'email.unique' => 'Toks el. pašto adresas jau panaudotas',
+        'name.required' => 'Įveskite vardą',
+        'name.max' => 'Vardas negali būti ilgesnis nei :max simbolių',
+        'name.min' => 'Vardas negali būti trumpesnis nei :min simboliai',
+        'password.required' => 'Įveskite slaptažodį',
+        'password.between' => 'Slaptažodis turi būti nuo 6 iki 30 simbolių',
+        'password.confirmed' => 'Slaptažodžiai turi sutapti',
+        'password_confirmation.required' => 'Pakartokite slaptažodį',
+        'password_confirmation.between' => 'Pakartotas slaptažodis turi būti nuo 6 iki 30 simbolių',
+    );        
+        
     protected $role;
     protected $fault;
 
@@ -47,7 +67,7 @@ class AuthController extends BaseController {
 
     public function storeUser() {
 
-        $validator = Validator::make(Input::all(), $this->userRules);
+        $validator = Validator::make(Input::all(), $this->userRules, $this->userMessages);
 
         if ($validator->passes()) {
             $user = new User;
@@ -63,7 +83,7 @@ class AuthController extends BaseController {
     }
 
     public function storeEmployee() {
-        $validator = Validator::make(Input::all(), $this->userRules);
+        $validator = Validator::make(Input::all(), $this->userRules, $this->userMessages);
         $specializationSet = false;
         if (Input::get('specializations') === null) {
             Session::flash('errorMessage', 'Pasirinkite bent vieną specializaciją.');

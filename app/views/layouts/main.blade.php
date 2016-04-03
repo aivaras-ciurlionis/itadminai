@@ -6,6 +6,18 @@
 function getRolesOfUser($roles) {
     $rolesNames = '';
     foreach($roles as $role) {
+         switch ($role->name) {
+             case 'Customer':
+                $role->name = 'Vartotojas';
+                break;
+             case 'Employee':
+                $role->name = 'Darbuotojas';
+                break;   
+             case 'SysAdmin':
+                $role->name = 'Administratorius';
+                break; 
+         }        
+        
         $rolesNames = $rolesNames.$role->name.", ";
     }
     return substr($rolesNames, 0, strlen($rolesNames) - 2);
@@ -29,8 +41,7 @@ function getRolesOfUser($roles) {
 
     <!-- Fonts -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.4.0/css/font-awesome.min.css" rel='stylesheet' type='text/css'>
-    <link href="https://fonts.googleapis.com/css?family=Lato:100,300,400,700" rel='stylesheet' type='text/css'>
-
+    <link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'>
 
 
 
@@ -38,10 +49,10 @@ function getRolesOfUser($roles) {
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet"> {{--
     <link href="{{ elixir('css/app.css') }}" rel="stylesheet"> --}}
     <link rel="stylesheet" href="{{ URL::asset('css/bootstrap-multiselect.css') }}" />
-        {{ HTML::style('css/custom-style.css') }}
+    {{ HTML::style('css/custom-style.css') }}
     <style>
         body {
-            font-family: 'Lato';
+           font-family: 'Roboto', sans-serif;
         }
         
         .fa-btn {
@@ -90,11 +101,9 @@ function getRolesOfUser($roles) {
                         <li class="menu-item"><a href="{{ url('/users/employees') }}">Darbuotojai</a></li>
                         <li class="menu-item"><a href="{{ url('/users/new') }}">Naujas vartotojas</a></li>
                         <li class="menu-item"><a href="{{ url('/faults/all') }}">Gedimai</a></li>
-                        <li class="menu-item"><a href="{{ url('/faults/types') }}">Gedimų tipai</a></li>
+                        <li class="menu-item"><a href="{{ url('/faultTypes') }}">Gedimų tipai</a></li>
                         @endif
-                        
-                        
-                        
+
                     @endif
                 </ul>
 
@@ -110,7 +119,7 @@ function getRolesOfUser($roles) {
                                 {{ Auth::user()->name }} | <?php echo getRolesOfUser(Auth::user()->roles) ?><span class="caret"></span>
                         </a>
                         <ul class="dropdown-menu" role="menu">
-                            <li><a href="{{ url('/logout') }}"><i class="fa fa-btn fa-sign-out"></i>Logout</a></li>
+                            <li><a href="{{ url('/logout') }}"><i class="fa fa-btn fa-sign-out"></i>Atsijungti</a></li>
                         </ul>
                     </li>
                     @endif

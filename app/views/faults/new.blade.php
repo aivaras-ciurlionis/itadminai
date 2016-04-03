@@ -23,7 +23,7 @@
                     <div class="col-sm-10">
                         <select class="form-control" id="type" name="type">
                               @foreach ($faultTypes as $faultType)
-                              <option>{{$faultType->name}}</option>                              
+                              <option <?php if(Request::old('type') === $faultType->name) echo 'selected' ?>>{{$faultType->name}}</option>                              
                               @endforeach
                         </select>
                     </div>

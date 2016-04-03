@@ -56,7 +56,7 @@ function showSortArrow($thisField, $currentField, $order) {
                 <table class="table table-hover">
                     <thead>
                         <tr>
-                            <th><a title="Rikiuoti pagal vardą" href="{{ url('users/customers?sortField=name&sortDirection='.flipSort($sortDirection)) }}">Vardas</a> <?php showSortArrow('name', $sortField, $sortDirection) ?>
+                            <th><a title="Rikiuoti pagal vardą" href="{{ url('users/customers?sortField=users.name&sortDirection='.flipSort($sortDirection)) }}">Vardas</a> <?php showSortArrow('name', $sortField, $sortDirection) ?>
                             </th>
                             <th><a title="Rikiuoti el. paštą" href="{{ url('users/customers?sortField=email&sortDirection='.flipSort($sortDirection)) }}">El. Paštas</a> <?php showSortArrow('email', $sortField, $sortDirection) ?>
                             </th>
@@ -87,16 +87,16 @@ function showSortArrow($thisField, $currentField, $order) {
                             @endif
                     
                             @if($user->faults !== null)
-                            <td>{{$user->faults->count()}}</td>
+                            <td>{{$user->fault_count}}</td>
                             @else
                             <td>0</td>
                             @endif
                             <td>                           
-                            <a href="{{url('users/setPassword/'.$user->id.'?backlist=customers')}}" type="button" class="btn btn-sm btn-info"><i class="glyphicon glyphicon-lock"></i>Pakeisti slaptažodį</a>
+                            <a href="{{url('users/setPassword/'.$user->user->id.'?backlist=customers')}}" type="button" class="btn btn-sm btn-info"><i class="glyphicon glyphicon-lock"></i>Pakeisti slaptažodį</a>
                             @if($user->disabled)
-                            <a href="{{url('users/enableUser/'.$user->id.'?backlist=customers')}}" type="button" class="btn btn-sm btn-primary"><i class="glyphicon glyphicon-lock"></i>Atblokuoti vartotoją</a>
+                            <a href="{{url('users/enableUser/'.$user->user->id.'?backlist=customers')}}" type="button" class="btn btn-sm btn-primary"><i class="glyphicon glyphicon-lock"></i>Atblokuoti vartotoją</a>
                             @else 
-                           <a href="{{url('users/disableUser/'.$user->id.'?backlist=customers')}}" type="button" class="btn btn-sm btn-danger"><i class="glyphicon glyphicon-remove-circle"></i>Blokuoti vartotoją</a>
+                           <a href="{{url('users/disableUser/'.$user->user->id.'?backlist=customers')}}" type="button" class="btn btn-sm btn-danger"><i class="glyphicon glyphicon-remove-circle"></i>Blokuoti vartotoją</a>
                             @endif
                             </td>
                         </tr>
