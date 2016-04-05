@@ -142,16 +142,12 @@ function showSortArrow($thisField, $currentField, $order) {
                                
                                @if(userHasRole(Auth::user()->roles, 'Customer'))   
                                                       
-                                @if($fault->state === 'registered')
+                                    @if($fault->state === 'registered')
                                     <a href="{{url('/faults/delete/'.$fault->id.'?backlist='.$type)}}" type="button" class="btn btn-sm btn-danger"><i class="glyphicon glyphicon-remove"></i>Pašalinti</a>
                                     @endif
                                     @if($fault->state === 'fixed')
                                     <a href="{{url('/faults/reopen/'.$fault->id.'?backlist='.$type)}}" type="button" class="btn btn-sm btn-info"><i class="glyphicon glyphicon-repeat"></i>Atidaryti iš naujo</a>
                                     @endif                  
-                                @endif
-                                
-                                @if(userHasRole(Auth::user()->roles, 'SysAdmin'))   
-                                  <a href="{{url('/faults/delete/'.$fault->id.'?backlist='.$type)}}" type="button" class="btn btn-sm btn-danger"><i class="glyphicon glyphicon-remove"></i>Pašalinti</a>                                 
                                 @endif
                                        
                             </td>

@@ -105,7 +105,7 @@ function toReadableTime($timeInSeconds){
                             <td>{{$user->user->name}}</td>
                             <td>{{$user->user->email}}</td>
                            
-                            <td>{{$user->created_at}}</td>
+                            <td>{{$user->user->created_at}}</td>
       
                             @if($user->disabled)
                             <td><span class="badge badge-reopened">Blokuotas</span></td>

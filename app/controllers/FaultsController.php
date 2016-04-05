@@ -51,7 +51,7 @@ class FaultsController extends BaseController {
         
 
         if ($fault === false) {
-            return Redirect::to('login');
+            return View::make('layouts.error_404');
         }
         
         if (userHasRole(Auth::user()->roles, 'SysAdmin')){    
@@ -71,10 +71,10 @@ class FaultsController extends BaseController {
         $result = $this->fault->setUserForFault($id, $user);
 
         if ($result === false) {
-            return Redirect::to('login');
+           return View::make('layouts.error_404');
         }    
            
-        Session::flash('successMessage', 'Priskirtas vartotojas pakeistas į '.$user);
+        Session::flash('successMessage', 'Priskirtas darbuotojas pakeistas į '.$user);
         
         return Redirect::to('faults/details/'.$id.'?backlist=all');
     }  
@@ -84,7 +84,7 @@ class FaultsController extends BaseController {
         $result = $this->fault->reopenFault(Auth::user(), $id);
 
         if ($result === false) {
-            return Redirect::to('login');
+            return View::make('layouts.error_404');
         }    
            
         Session::flash('successMessage', 'Gedimas atidarytas iš naujo.');
@@ -97,7 +97,7 @@ class FaultsController extends BaseController {
         $result = $this->fault->deleteFault(Auth::user(), $id);
 
         if ($result === false) {
-            return Redirect::to('login');
+            return View::make('layouts.error_404');
         }   
             
         Session::flash('successMessage', 'Gedimas ištrintas');
@@ -125,7 +125,7 @@ class FaultsController extends BaseController {
             Session::flash('successMessage', 'Gedimo statusas pakeistas į '.$newStatus);
             return Redirect::to('faults/details/'.$id.'?backlist=asigned');
         } else {
-            return Redirect::to('login');
+            return View::make('layouts.error_404');
         }
     }
 

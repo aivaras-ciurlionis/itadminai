@@ -48,7 +48,16 @@ Log::useFiles(storage_path().'/logs/laravel.log');
 
 App::error(function(Exception $exception, $code)
 {
-	Log::error($exception);
+	switch ($code)
+    {
+        case 403: /* permission denied */
+        case 404: /* not found */
+            return View::make('layouts.error_404');
+
+        case 500: /* internal error */
+        default:
+            return View::make('layouts.error_500');
+    }
 });
 
 /*

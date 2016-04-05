@@ -109,7 +109,7 @@ function toReadableTime($timeInSeconds){
                     </div>
 
                     <div class="col-sm-12">
-                        <label for="type" class="col-sm-2 control-label">Reakcijos laikas taisyti</label>
+                        <label for="type" class="col-sm-2 control-label">Reakcijos laikas</label>
                         <div class="col-sm-10">{{toReadableTime($fault->reaction_time)}}</div>
                     </div>                   
                     
